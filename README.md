@@ -1,8 +1,8 @@
 # ndefence - internal security log parser and firewall, written in golang 
 
-A cut and dry golang application to generate daily data from log file
-entries of common servers, such as nginx or apache and output it to a
-text file so it can be accessed via w3m or lynx or wget.
+A humble golang application to generate daily data from log file entries
+common servers, such as nginx or apache and output it to a text file so
+it can be accessed via w3m or lynx or wget.
 
 Specifically it takes IPv4 address data from the access.log files and
 conducts the following:
@@ -69,8 +69,8 @@ since it has greater compatibility with more distros.
 # TODOs
 
 * Hostname check on the IP addresses as soon as they access the server
-
 * Create a systemd service that works better with alternative distros
+* Consider adding the ability to block IPv6 addresses as well
 
 
 # Author
