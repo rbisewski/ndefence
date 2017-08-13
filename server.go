@@ -19,7 +19,7 @@ import (
 //
 type Server struct {
 
-    uint Port
+    Port uint
 }
 
 //! Parse a configuration file, and return a list of servers
@@ -38,7 +38,7 @@ func convertStringsToServers(string_data []string) ([]Server,
   }
 
   // variable declaration
-  var list_of_servers []Server = {}
+  var list_of_servers []Server
 
   // TODO: implemen this function
 

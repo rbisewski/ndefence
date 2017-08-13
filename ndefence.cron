@@ -1,0 +1,4 @@
+#
+# Run the ndefence program at 08:30 and 20:30 every day.
+#
+30 8,20 * * * root /usr/bin/ndefence >/dev/null 2>&1

@@ -1,0 +1,12 @@
+[Unit]
+Description=ndefence Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/ndefence --daemon-mode
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
