@@ -150,6 +150,8 @@ func convertStringsToServers(string_data []string) ([]Server,
  *
  * @return    Server      generated Server object
  * @return    error       error message, if any
+ *
+ * TODO: test to ensure this works
  */
 func convertToNginxServerEntry(data []string) (Server, error) {
 
@@ -159,9 +161,14 @@ func convertToNginxServerEntry(data []string) (Server, error) {
           "invalid input")
     }
 
-    // variable declaration
-    var new_server Server
+    // define a blank and empty new server
+    var new_server Server = Server{make([]string, 0), false, "", "", "",
+      make([]string, 0), "", "", ""}
+
+    // define a variable to keep track of regex success hits, and a flag to
+    // let the parser know that that this is parsing `location {}`
     var success string = ""
+    var isThisParsingLocation bool = false
 
     // assemble the needed regex
     listen_regex := regexp.MustCompile("^[\t\f\r ]{1,16}listen[\t\f\r ]{1,16}(?.{2,16})[\t\f\r ]{1,16}")
@@ -176,9 +183,6 @@ func convertToNginxServerEntry(data []string) (Server, error) {
     close_bracket_regex := regexp.MustCompile("[\t\f\r ]{1,16}[}][\t\f\r ]{1,16}")
 
     // cycle thru the list of the data string
-    //
-    // TODO: complete this function; right now it doesn't really do much
-    //
     for _, line := range data {
 
         // if the line is too small, skip it
@@ -191,6 +195,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.Listen = append(new_server.Listen, success)
             continue
         }
 
@@ -199,6 +204,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.Server_name = success
             continue
         }
 
@@ -207,6 +213,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.Root = success
             continue
         }
 
@@ -215,6 +222,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.Index = success
             continue
         }
 
@@ -223,6 +231,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.Return = success
             continue
         }
 
@@ -231,6 +240,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.SSL = success
             continue
         }
 
@@ -239,6 +249,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.SSL_cert = success
             continue
         }
 
@@ -247,14 +258,17 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            new_server.SSL_cert_key = success
             continue
         }
 
-        // check for "location xxx;"
+        // check for "location /path/to/site {"
         success = location_regex.FindString(line)
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+            isThisParsingLocation = true
+            new_server.Location = append(new_server.Location, line)
             continue
         }
 
@@ -263,6 +277,22 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 
         // move on to the next line if regex successful
         if len(success) > 0 {
+
+            // hence parsing location is done
+            if isThisParsingLocation {
+                isThisParsingLocation = false
+                new_server.Location = append(new_server.Location, line)
+            }
+
+            // move on to the next entry
+            continue
+        }
+
+        // check if still parsing Location values
+        if isThisParsingLocation {
+
+            // then go ahead and append the line
+            new_server.Location = append(new_server.Location, line)
             continue
         }
     }
