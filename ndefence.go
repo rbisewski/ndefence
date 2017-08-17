@@ -57,6 +57,9 @@ var (
     // Valid server types
     validServerTypes = []string{"apache", "nginx"}
 
+    // Path to default site config
+    default_site_config_path = ""
+
     // Boolean to flag whether a given server is valid or not
     serverIsValid = false
 
@@ -510,8 +513,48 @@ func main() {
             os.Exit(1)
         }
 
-        // TODO: as mentioned earlier, consider adding the blocked IPv4
-        //       addresses to a firewall at this point in the program
+        // TODO: implement the below pseudo code / comments
+
+        // Attempt to break up the file into an array of strings a demarked by
+        // the newline character.
+        //
+        // site_config_data, err := tokenizeFile(default_site_config, "\n")
+
+        // if an error occurs, terminate from the program
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+
+        // reading from the above config string data, attempt to convert
+        // the string data to a list of servers
+        //
+        // list_of_servers, err := convertStringsToServers(site_config_data)
+
+        // if an error occurs, terminate from the program
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+
+        // if there is at least one server...
+
+            // for every server
+
+                // verify that the server block was read properly
+
+                // if the server block looks good, go ahead and append it
+                // to a string
+
+        // if there is at least one line of server config data appended...
+
+            // attempt to write it to the file in question
+
+        // if an error occurs, terminate from the program
+        if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
 
         // if daemon mode is disabled, then exit this loop
         if !daemonMode {
