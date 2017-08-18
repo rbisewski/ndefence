@@ -307,3 +307,26 @@ func convertToNginxServerEntry(data []string) (Server, error) {
     // since this generated a new server object, pass it back
     return new_server, nil
 }
+
+//! Convert a given Server object into a set of strings
+/*
+ * @param     Server      given Server object
+ *
+ * @return    string      printed out version of the Server
+ * @return    error       error message, if any
+ *
+ * TODO: implement this function
+ */
+func convertServerToString(server Server) (string, error) {
+
+    // input validation
+    if len(server.Server_name) < 1 || len(server.Listen) < 1 {
+        return "", fmt.Errorf("convertServerToString() --> invalid input")
+    }
+
+    // variable declaration
+    var output string = ""
+
+    // everything worked fine
+    return output, nil
+}

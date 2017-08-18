@@ -538,27 +538,43 @@ func main() {
             // if there is at least one server...
             for _, server := range list_of_servers {
 
-                // TODO: implement the below pseudo code / comments
-                server = server
-
                 // verify that the server block was read properly
+                if len(server.Server_name) < 1 || len(server.Listen) < 1 {
+
+                    // else skip to the next element
+                    continue
+                }
 
                 // if the server block looks good, go ahead and append it
                 // to a string
+                output, err := convertServerToString(server)
+
+                // if an error occurred, skip to the next element
+                if err != nil {
+                    continue
+                }
+
+                // append the output to the config contents
+                if len(output) > 0 {
+                    new_default_site_config_contents += output
+                }
             }
 
             // if there is at least one line of server config data appended...
             if len(new_default_site_config_contents) > 0 {
 
-                // TODO: implement the below pseudo code / comments
-
                 // attempt to write it to the file in question
+                err = ioutil.WriteFile(default_site_config_path,
+                                       []byte(new_default_site_config_contents),
+                                       0644)
 
                 // if an error occurs, terminate from the program
                 if err != nil {
                     fmt.Println(err)
                     os.Exit(1)
                 }
+
+                // TODO: have the server restart as well
             }
         }
 
