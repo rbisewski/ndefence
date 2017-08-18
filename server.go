@@ -238,9 +238,16 @@ func convertToNginxServerEntry(data []string) (Server, error) {
         // check for "ssl on;"
         success = ssl_regex.FindString(line)
 
-        // move on to the next line if regex successful
-        if len(success) > 0 {
-            new_server.SSL = success
+        // move on to the next line if the regex successfully determined
+        // that SSL is set to on...
+        if len(success) > 0 && success == "on" {
+            new_server.SSL = true
+            continue
+
+        // move on to the next line if the regex successfully determined
+        // that SSL is set to off...
+        } else if len(success) > 0 && success != "on" {
+            new_server.SSL = false
             continue
         }
 

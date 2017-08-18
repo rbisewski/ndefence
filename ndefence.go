@@ -89,21 +89,20 @@ func main() {
 
     // Variables to hold the extracted IP addresses and to hold ip
     // addresses to consider blocking, if enough data is gathered
-    //
-    // TODO: adjust the code so that it will add the blocked IPv4s
-    //       to a firewall for some period of time; e.g. 48 hours
-    //
     var ip_addresses = make(map[string] int)
     var blocked_ip_addresses = []string{}
 
     // Variable to hold a generic log header
     var generic_log_header = ""
 
-    // Variable to hold the log contents written to disk.
+    // Variables to hold the log contents written to disk.
     var ip_log_contents string       = ""
     var whois_log_contents string    = ""
     var redirect_log_contents string = ""
     var blocked_log_contents string  = ""
+
+    // Variables to hold the contents of the default site config
+    var new_default_site_config_contents string = ""
 
     // Variable to hold the number of lines added to the redirect log
     var lines_added_to_redirect uint = 0
@@ -513,47 +512,54 @@ func main() {
             os.Exit(1)
         }
 
-        // TODO: implement the below pseudo code / comments
+        // if the default site config is defined
+        if len(default_site_config_path) > 0 {
 
-        // Attempt to break up the file into an array of strings a demarked by
-        // the newline character.
-        //
-        // site_config_data, err := tokenizeFile(default_site_config, "\n")
+            // Attempt to break up the file into an array of strings a demarked by
+            // the newline character.
+            site_config_data, err := tokenizeFile(default_site_config_path, "\n")
 
-        // if an error occurs, terminate from the program
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+            // if an error occurs, terminate from the program
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
 
-        // reading from the above config string data, attempt to convert
-        // the string data to a list of servers
-        //
-        // list_of_servers, err := convertStringsToServers(site_config_data)
+            // reading from the above config string data, attempt to convert
+            // the string data to a list of servers
+            list_of_servers, err := convertStringsToServers(site_config_data)
 
-        // if an error occurs, terminate from the program
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
-        }
+            // if an error occurs, terminate from the program
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
 
-        // if there is at least one server...
+            // if there is at least one server...
+            for _, server := range list_of_servers {
 
-            // for every server
+                // TODO: implement the below pseudo code / comments
+                server = server
 
                 // verify that the server block was read properly
 
                 // if the server block looks good, go ahead and append it
                 // to a string
+            }
 
-        // if there is at least one line of server config data appended...
+            // if there is at least one line of server config data appended...
+            if len(new_default_site_config_contents) > 0 {
 
-            // attempt to write it to the file in question
+                // TODO: implement the below pseudo code / comments
 
-        // if an error occurs, terminate from the program
-        if err != nil {
-            fmt.Println(err)
-            os.Exit(1)
+                // attempt to write it to the file in question
+
+                // if an error occurs, terminate from the program
+                if err != nil {
+                    fmt.Println(err)
+                    os.Exit(1)
+                }
+            }
         }
 
         // if daemon mode is disabled, then exit this loop
