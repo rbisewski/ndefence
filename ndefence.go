@@ -22,6 +22,11 @@ import (
     "regexp"
     "strings"
     "time"
+
+    "./ndefence_hostname"
+    "./ndefence_io"
+    "./ndefence_server"
+    "./ndefence_utils"
 )
 
 //
@@ -147,7 +152,7 @@ func main() {
 
         // Attempt to break up the file into an array of strings a demarked by
         // the newline character.
-        lines, err := tokenizeFile(access_log_location, "\n")
+        lines, err := ndefence_io.TokenizeFile(access_log_location, "\n")
 
         // if an error occurred, print it out and terminate the program
         if err != nil {
@@ -168,7 +173,7 @@ func main() {
 
         // extract the date of the last line, this is so that the program can
         // gather data concerning only the latest entries
-        latest_date_in_log, err := obtainLatestDate(last_line)
+        latest_date_in_log, err := ndefence_io.ObtainLatestDate(last_line)
 
         // check if an error occurred
         if err != nil {
@@ -231,7 +236,7 @@ func main() {
             ip := elements[0]
 
             // determine if this is a valid IPv4 address
-            if !isValidIPv4Address(ip) {
+            if !ndefence_utils.IsValidIPv4Address(ip) {
                 continue
             }
 
@@ -292,7 +297,7 @@ func main() {
             // since the \t character tends to get mangled easily, add a
             // buffer of single-space characters instead to the IPv4
             // addresses
-            space_formatted_ip_address, err := spaceFormatIPv4(ip)
+            space_formatted_ip_address, err := ndefence_utils.SpaceFormatIPv4(ip)
 
             // if an error occurs, skip to the next element
             if err != nil {
@@ -308,7 +313,7 @@ func main() {
 
             // finally, add the ip address to the list of IPv4 addresses to
             // consider blocking eventually
-            if (!isStringInArray(ip, blocked_ip_addresses)) {
+            if (!ndefence_utils.IsStringInArray(ip, blocked_ip_addresses)) {
                 blocked_ip_addresses = append(blocked_ip_addresses, ip)
             }
 
@@ -317,7 +322,7 @@ func main() {
         }
 
         // attempt to obtain the whois entries, as a string
-        whois_strings, whois_summary_map, err := obtainWhoisEntries(ip_addresses)
+        whois_strings, whois_summary_map, err := ndefence_hostname.ObtainWhoisEntries(ip_addresses)
 
         // if an error occurred, terminate the program
         if err != nil {
@@ -336,7 +341,7 @@ func main() {
 
         // attempt to stat() the whois.log file, else create it if it does
         // not currently exist
-        err = statOrCreateFile(web_location + whois_log)
+        err = ndefence_io.StatOrCreateFile(web_location + whois_log)
 
         // if an error occurred during stat(), yet the program was unable
         // to recover or recreate the file, then exit the program
@@ -351,7 +356,7 @@ func main() {
                                0644)
 
         // convert the ip addresses map into an array of strings
-        ip_strings, err := convertIpAddressMapToString(ip_addresses,
+        ip_strings, err := ndefence_hostname.ConvertIpAddressMapToString(ip_addresses,
           whois_summary_map)
 
         // if an error occurred, terminate from the program
@@ -362,7 +367,7 @@ func main() {
 
         // attempt to stat() the ip.log file, else create it if it does
         // not currently exist
-        err = statOrCreateFile(web_location + ip_log)
+        err = ndefence_io.StatOrCreateFile(web_location + ip_log)
 
         // if an error occurred during stat(), yet the program was unable
         // to recover or recreate the file, then exit the program
@@ -401,7 +406,7 @@ func main() {
 
         // attempt to stat() the ip.log file, else create it if it does
         // not currently exist
-        err = statOrCreateFile(web_location + redirect_log)
+        err = ndefence_io.StatOrCreateFile(web_location + redirect_log)
 
         // if an error occurred during stat(), yet the program was unable
         // to recover or recreate the file, then exit the program
@@ -459,7 +464,7 @@ func main() {
 
         // attempt to stat() the blocked.log file, else create it if it does
         // not currently exist
-        err = statOrCreateFile(web_location + blocked_log)
+        err = ndefence_io.StatOrCreateFile(web_location + blocked_log)
 
         // if an error occurred during stat(), yet the program was unable
         // to recover or recreate the file, then exit the program
@@ -517,7 +522,7 @@ func main() {
 
             // Attempt to break up the file into an array of strings a demarked by
             // the newline character.
-            site_config_data, err := tokenizeFile(default_site_config_path, "\n")
+            site_config_data, err := ndefence_io.TokenizeFile(default_site_config_path, "\n")
 
             // if an error occurs, terminate from the program
             if err != nil {
@@ -527,7 +532,7 @@ func main() {
 
             // reading from the above config string data, attempt to convert
             // the string data to a list of servers
-            list_of_servers, err := convertStringsToServers(site_config_data)
+            list_of_servers, err := ndefence_server.ConvertStringsToServers(site_config_data)
 
             // if an error occurs, terminate from the program
             if err != nil {
@@ -547,7 +552,7 @@ func main() {
 
                 // if the server block looks good, go ahead and append it
                 // to a string
-                output, err := convertServerToString(server)
+                output, err := ndefence_server.ConvertServerToString(server)
 
                 // if an error occurred, skip to the next element
                 if err != nil {
