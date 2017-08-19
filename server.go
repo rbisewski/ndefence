@@ -314,8 +314,6 @@ func convertToNginxServerEntry(data []string) (Server, error) {
  *
  * @return    string      printed out version of the Server
  * @return    error       error message, if any
- *
- * TODO: implement this function
  */
 func convertServerToString(server Server) (string, error) {
 
@@ -326,6 +324,34 @@ func convertServerToString(server Server) (string, error) {
 
     // variable declaration
     var output string = ""
+
+    // print out every listen
+    for _, l := range server.Listen {
+
+        // ensure that the listen is something sane
+        if len(l) < 1 {
+            continue
+        }
+
+        // listen on port...
+        output += "listen " + l + ";\n"
+    }
+
+    // append the SSL, if it is enabled
+    if server.SSL == true {
+        output += "ssl on;\n"
+    }
+
+    //TODO: implement code that prints the following
+    /*
+     * SSL_cert string
+     * SSL_cert_key string
+     * Server_name string
+     * Location []string
+     * Root string
+     * Index string
+     * Return string
+     */
 
     // everything worked fine
     return output, nil
