@@ -1,8 +1,8 @@
 # ndefence - internal security log parser and firewall, written in golang 
 
 A humble golang application to generate daily data from log file entries
-common servers, such as nginx or apache and output it to a text file so
-it can be accessed via w3m or lynx or wget.
+from common servers, such as nginx or apache. In addition, it will try
+to refine and potentially block IPs that attempt too many connections.
 
 Specifically it takes IPv4 address data from the access.log files and
 conducts the following:
@@ -11,8 +11,9 @@ conducts the following:
 * whois lookup
 * records server requests of HTML code 302
 
-This program will allow check for odd numbers of anonymous connections,
-which it will add them to firewall those addresses.
+This program checks for high counts of anonymous connections, and it will
+add them to firewall those addresses if they appear to come from unusual
+sources.
 
 Feel free to fork it and use it for other projects if you find it
 useful.
