@@ -517,8 +517,9 @@ func main() {
             os.Exit(1)
         }
 
-        // if the default site config is defined
-        if len(default_site_config_path) > 0 {
+        // if the default site config is defined, and this appears to be an
+        // nginx server...
+        if len(default_site_config_path) > 0 && serverType == "nginx" {
 
             // Attempt to break up the file into an array of strings a demarked by
             // the newline character.
@@ -579,7 +580,14 @@ func main() {
                     os.Exit(1)
                 }
 
-                // TODO: have the server restart as well
+                // have the server restart as well
+                _, err := ndefence_utils.RunNginxReloadCommand()
+
+                // if an error occurs, terminate from the program
+                if err != nil {
+                    fmt.Println(err)
+                    os.Exit(1)
+                }
             }
         }
 

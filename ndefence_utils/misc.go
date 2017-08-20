@@ -11,7 +11,9 @@ package ndefence_utils
 // Imports
 //
 import (
+    "bytes"
     "fmt"
+    "os/exec"
     "strings"
     "strconv"
 )
@@ -222,4 +224,62 @@ func IsStringInArray(str string, stringArray []string) bool {
 
     // otherwise assume it is not present
     return false
+}
+
+//! Attempt to execute a given command.
+/*
+ *  @param    none
+ *
+ *  @return   bytes[]      array of byte buffer data
+ */
+func RunNginxReloadCommand() (bytes.Buffer, error) {
+
+    // variable declaration
+    var output bytes.Buffer
+
+    // assemble the command from the list of string arguments
+    cmd := exec.Command("service nginx reload")
+    cmd.Stdout = &output
+    cmd.Stderr = &output
+
+    // attempt to execute the command
+    err := cmd.Run()
+
+    // if an error occurred, go ahead and pass it back
+    if err != nil {
+        return output, err
+    }
+
+    // having ran the command, pass back the result if no error has
+    // occurred
+    return output, nil
+}
+
+//! Attempt to execute a given command.
+/*
+ *  @param    none
+ *
+ *  @return   bytes[]      array of byte buffer data
+ */
+func RunApacheReloadCommand() (bytes.Buffer, error) {
+
+    // variable declaration
+    var output bytes.Buffer
+
+    // assemble the command from the list of string arguments
+    cmd := exec.Command("service apache2 reload")
+    cmd.Stdout = &output
+    cmd.Stderr = &output
+
+    // attempt to execute the command
+    err := cmd.Run()
+
+    // if an error occurred, go ahead and pass it back
+    if err != nil {
+        return output, err
+    }
+
+    // having ran the command, pass back the result if no error has
+    // occurred
+    return output, nil
 }
