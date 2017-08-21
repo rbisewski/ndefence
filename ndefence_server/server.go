@@ -325,6 +325,9 @@ func ConvertServerToString(server Server) (string, error) {
     // variable declaration
     var output string = ""
 
+    // append the server start
+    output += "server {\n"
+
     // print out every listen
     for _, l := range server.Listen {
 
@@ -342,16 +345,37 @@ func ConvertServerToString(server Server) (string, error) {
         output += "ssl on;\n"
     }
 
-    //TODO: implement code that prints the following
-    /*
-     * SSL_cert string
-     * SSL_cert_key string
-     * Server_name string
-     * Location []string
-     * Root string
-     * Index string
-     * Return string
-     */
+    // if an SSL cert was defined, and SSL is enabled, go ahead and append
+    // it to the output
+    if server.SSL == true {
+        output += "ssl_certificate " + server.SSL_cert + ";\n"
+    }
+
+    // if an SSL cert key was defined, and SSL is enabled, go ahead and
+    // append it to the output
+    if server.SSL == true {
+        output += "ssl_certificate_key " + server.SSL_cert_key + ";\n"
+    }
+
+    // append the document root
+    output += "root " + server.Root + ";\n"
+
+    // append the index
+    output += "index " + server.Index + ";\n"
+
+    // attach the server name
+    output += "server_name " + server.Server_name + ";\n"
+
+    // append the return values
+    output += "return " + server.Return + ";\n"
+
+    // attach all of the location values
+    for _, l := range server.Location {
+        output += l
+    }
+
+    // append the server end
+    output += "}\n"
 
     // everything worked fine
     return output, nil
