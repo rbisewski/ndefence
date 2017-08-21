@@ -589,6 +589,13 @@ func main() {
                     os.Exit(1)
                 }
             }
+
+        // if the default site config is defined, and this appears to be an
+        // apache2 server...
+        } else if len(default_site_config_path) > 0 &&
+          serverType == "apache" {
+
+          // TODO: consider implementing this if it is ever needed
         }
 
         // if daemon mode is disabled, then exit this loop
