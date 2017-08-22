@@ -106,7 +106,8 @@ func main() {
     var redirect_log_contents string = ""
     var blocked_log_contents string  = ""
 
-    // Variables to hold the contents of the default site config
+    // Variables to hold the header / contents of the default site config
+    var new_default_site_config_header string = ""
     var new_default_site_config_contents string = ""
 
     // Variable to hold the number of lines added to the redirect log
@@ -569,9 +570,6 @@ func main() {
             // if there is at least one line of server config data appended...
             if len(new_default_site_config_contents) > 0 {
 
-                // string to hold the config header
-                var new_default_site_config_header string = ""
-
                 // append the time and date the config was generated
                 new_default_site_config_header += "#\n"
                 new_default_site_config_header += "# Nginx Config\n"
@@ -613,7 +611,18 @@ func main() {
         } else if len(default_site_config_path) > 0 &&
           serverType == "apache" {
 
+            // Attempt to break up the file into an array of strings a demarked by
+            // the newline character.
+            site_config_data, err := ndefence_io.TokenizeFile(default_site_config_path, "\n")
+
+            // if an error occurs, terminate from the program
+            if err != nil {
+                fmt.Println(err)
+                os.Exit(1)
+            }
+
           // TODO: consider implementing this if it is ever needed
+          site_config_data = site_config_data
         }
 
         // if daemon mode is disabled, then exit this loop
