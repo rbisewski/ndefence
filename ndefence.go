@@ -180,8 +180,12 @@ func main() {
         // attempt to grab the current day/month/year
         datetime := time.Now().Format(time.UnixDate)
 
+        //
         // safety check, ensure this actually got a meaningful string
-        if len(datetime) < 1 {
+        //
+        // * should be at least len("DD/MM/YYYY"), so at least 10
+        //
+        if len(datetime) < 10 {
             fmt.Println("Warning: Improper system date-time value" +
               "detected!\n")
             os.Exit(1)
