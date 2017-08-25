@@ -21,17 +21,19 @@ import (
 
 // Generate a configuration file based on the provided data
 /*
- * @param    string    /path/to/config
- * @param    string    server type (nginx, apache2, etc)
- * @param    string    Datetime, as a string
+ * @param    string      /path/to/config
+ * @param    string      server type (nginx, apache2, etc)
+ * @param    string[]    list of IPv4 addressess to consider blocking
+ * @param    string      Datetime, as a string
  *
- * @return   error     error message, if any
+ * @return   error       error message, if any
  */
 func Generate_config(default_site_config_path string,
-  serverType string, datetime string) (error) {
+  serverType string, blocked_ips []string, datetime string) (error) {
 
     // input validation
-    if len(default_site_config_path) < 1 || len(serverType) < 1 {
+    if len(default_site_config_path) < 1 || len(serverType) < 1 ||
+      len(datetime) < 1 {
         return nil;
     }
 

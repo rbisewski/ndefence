@@ -478,25 +478,7 @@ func main() {
         if len(blocked_ip_addresses) < 1 {
             blocked_log_contents += "No IPs blocked at this time."
 
-        // if there *are* IPs that have been requested to block, attempt to
-        // generate a list of IP addresses to block, in the form of an
-        // nginx 'sites-available' configuration
-        } else if len(blocked_ip_addresses) >= 1 && serverType == "nginx" {
-
-            // start with a location chunk
-            blocked_log_contents += "location / {\n"
-
-            // append all of the blocked IPs together, newline separated
-            for _, ip := range blocked_ip_addresses {
-                blocked_log_contents += "deny " + ip + ";\n"
-            }
-
-            // terminate with a curl bracket, so signal the end of the
-            // server location
-            blocked_log_contents += "}\n"
-
-        // otherwise the server is not an nginx, so just print out a list
-        // of IPs that would have been blocked
+        // else print the IPs that would have been blocked
         } else {
 
             // append all of the blocked IPs together, newline separated
@@ -521,7 +503,7 @@ func main() {
         // If a config is specified, attempt to generate a new one
         //
         err = ndefence_utils.Generate_config(default_site_config_path,
-          serverType, datetime)
+          serverType, blocked_ip_addresses, datetime)
 
         // if an error occurs, terminate from the program
         if err != nil {
