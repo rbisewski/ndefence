@@ -34,10 +34,17 @@ import (
 func ConvertIpAddressMapToString(ip_map map[string] int,
   whois_country_map map[string] string) (string, error) {
 
-    // input validation
-    if len(ip_map) < 1 || len(whois_country_map) < 1 {
-        return "", fmt.Errorf("convertIpAddressMapToString() --> " +
-          "invalid input")
+    // input validation for the IPv4 map
+    if len(ip_map) < 1 {
+        return "", fmt.Errorf("ConvertIpAddressMapToString() --> " +
+          "IPv4 map appears empty")
+
+    // input validation for the WHOIS country map
+    } else if len(whois_country_map) < 1 {
+        return "", fmt.Errorf("ConvertIpAddressMapToString() --> " +
+          "WHOIS country map appears empty\nConsider checking if a " +
+          "whois protocol client is installed or if your network " +
+          "connection functional")
     }
 
     // variable declaration

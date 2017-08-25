@@ -356,8 +356,8 @@ func main() {
                                0644)
 
         // convert the ip addresses map into an array of strings
-        ip_strings, err := ndefence_hostname.ConvertIpAddressMapToString(ip_addresses,
-          whois_summary_map)
+        ip_strings, err := ndefence_hostname.ConvertIpAddressMapToString(
+          ip_addresses, whois_summary_map)
 
         // if an error occurred, terminate from the program
         if err != nil {
