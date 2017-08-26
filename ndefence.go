@@ -67,6 +67,12 @@ var (
     // Boolean to flag whether a given server is valid or not
     serverIsValid = false
 
+    // Whether or not to print the current version of the program
+    printVersion = false
+
+    // default version value
+    Version = "0.0"
+
     // Argument for enabling daemon mode
     daemonMode = false
 )
@@ -81,6 +87,10 @@ func init() {
     // Daemon mode flag
     flag.BoolVar(&daemonMode, "daemon-mode", false,
       "Whether or not to run this program as a background service.")
+
+    // Version mode flag
+    flag.BoolVar(&printVersion, "version", false,
+      "Print the current version of this program and exit.")
 }
 
 //
@@ -110,6 +120,13 @@ func main() {
 
     // Parse the flags, if any.
     flag.Parse()
+
+    // if requested, go ahead and print the version; afterwards exit the
+    // program, since this is all done
+    if (printVersion) {
+        fmt.Println("ndefence v" + Version)
+        os.Exit(0)
+    }
 
     // Lower case the serverType variable value.
     serverType = strings.ToLower(serverType)
