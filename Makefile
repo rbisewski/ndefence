@@ -18,7 +18,7 @@ endif
 all: build
 
 build:
-	@go build -ldflags '-s -w -X main.Version=17.08'
+	@go build -ldflags '-s -w -X main.Version='${VERSION}
 
 clean:
 	@go clean
