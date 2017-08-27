@@ -314,7 +314,8 @@ func main() {
             // since the \t character tends to get mangled easily, add a
             // buffer of single-space characters instead to the IPv4
             // addresses
-            space_formatted_ip_address, err := ndefence_utils.SpaceFormatIPv4(ip)
+            space_formatted_ip_address, err :=
+              ndefence_utils.SpaceFormatIPv4(ip)
 
             // if an error occurs, skip to the next element
             if err != nil {
@@ -339,7 +340,8 @@ func main() {
         }
 
         // attempt to obtain the whois entries, as a string
-        whois_strings, whois_summary_map, err := ndefence_hostname.ObtainWhoisEntries(ip_addresses)
+        whois_strings, whois_summary_map, err :=
+          ndefence_hostname.ObtainWhoisEntries(ip_addresses)
 
         // if an error occurred, terminate the program
         if err != nil {
@@ -400,8 +402,8 @@ func main() {
         ip_log_contents += generic_log_header
 
         // append the ip_strings content to this point of the log; it will
-        // either contain the "IPv4 Address + Daily Count" or a message stating
-        // that no addresses appear to be recorded today.
+        // either contain the "IPv4 Address + Daily Count" or a message
+        // stating that no addresses appear to be recorded today.
         ip_log_contents += ip_strings
 
         // attempt to write the string contents to the ip.log file

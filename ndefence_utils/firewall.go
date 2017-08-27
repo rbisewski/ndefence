@@ -59,7 +59,8 @@ func Generate_config(default_site_config_path string,
 
         // reading from the above config string data, attempt to convert
         // the string data to a list of servers
-        list_of_servers, err := ndefence_server.ConvertStringsToServers(site_config_data)
+        list_of_servers, err :=
+          ndefence_server.ConvertStringsToServers(site_config_data)
 
         // if an error occurs, terminate from the program
         if err != nil {

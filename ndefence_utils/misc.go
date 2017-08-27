@@ -184,8 +184,8 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
 
     // ensure that there are at least 4 pieces
     if len(ip_pieces) != 4 {
-        return "", fmt.Errorf("obtainSlash24FromIpv4() --> non-standard " +
-          "IPv4 address")
+        return "", fmt.Errorf("obtainSlash24FromIpv4() --> " +
+          "non-standard IPv4 address")
     }
 
     // reconstruct the IPv4 address string
