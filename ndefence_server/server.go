@@ -363,8 +363,14 @@ func ConvertServerToString(server Server) (string, error) {
     // append the index
     output += "index " + server.Index + ";\n"
 
-    // attach the server name
-    output += "server_name " + server.Server_name + ";\n"
+    // attach the server name, if there is one
+    if len(server.Server_name) > 0 {
+        output += "server_name " + server.Server_name + ";\n"
+
+    // otherwise default to just the current website location
+    } else {
+        output += "server_name _;\n"
+    }
 
     // append the return values
     output += "return " + server.Return + ";\n"
