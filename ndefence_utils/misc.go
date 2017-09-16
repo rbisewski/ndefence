@@ -33,6 +33,9 @@ func IsValidIPv6Address(ip string) (bool) {
         return false
     }
 
+    // variable declaration
+    var wasEveryPieceBlank bool = true
+
     // attempt to split the string into pieces via the ':' char
     ip_pieces := strings.Split(ip, ":")
 
@@ -44,13 +47,19 @@ func IsValidIPv6Address(ip string) (bool) {
     // for every hexadecimal piece of the IPv6 address...
     for _, hexa := range ip_pieces {
 
+        // if the hexadecimal was blank, go ahead and switch over to
+        // the next element, since the IPv6 spec does allow for some
+        // elements to be blank, in certain situations...
+        if len(hexa) == 0 {
+            continue
+
         // ensure it has a length between 1 and 4
-        if len(hexa) < 1 || len(hexa) > 4 {
+        } else if len(hexa) < 1 || len(hexa) > 4 {
             return false
         }
 
         // convert the ip_piece string to an integer
-        hexa_as_uint, err := strconv.ParseUint(hexa, 0, 16)
+        hexa_as_uint, err := strconv.ParseUint(hexa, 16, 64)
 
         // if an error occurs, go ahead and return false
         if err != nil {
@@ -61,6 +70,16 @@ func IsValidIPv6Address(ip string) (bool) {
         if hexa_as_uint > 65535 {
             return false
         }
+
+        // having gotten this far, then at least 1 of the hexademical
+        // chunks was non-blank, so set the flag
+        wasEveryPieceBlank = false
+    }
+
+    // in the scenario where every case was blank, then some silly input
+    // like ":::::::" was given, so return false here
+    if wasEveryPieceBlank {
+        return false
     }
 
     // if all the tests passed, go ahead and return true
