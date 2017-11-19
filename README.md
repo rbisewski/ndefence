@@ -62,8 +62,11 @@ since it has greater compatibility with more distros.
 2) Consider cleaning up any remaining logs, if they are no longer needed.
 
     rm /var/www/html/data/blocked.log
+
     rm /var/www/html/data/ip.log
+
     rm /var/www/html/data/redirect.log
+
     rm /var/www/html/data/whois.log
 
 
