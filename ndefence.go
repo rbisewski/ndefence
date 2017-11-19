@@ -106,17 +106,9 @@ func main() {
     var ip_addresses = make(map[string] int)
     var blocked_ip_addresses = []string{}
 
-    // Variable to hold a generic log header
-    var generic_log_header = ""
-
-    // Variables to hold the log contents written to disk.
-    var ip_log_contents string       = ""
-    var whois_log_contents string    = ""
-    var redirect_log_contents string = ""
-    var blocked_log_contents string  = ""
-
-    // Variable to hold the number of lines added to the redirect log
-    var lines_added_to_redirect uint = 0
+    // Variable to hold a generic log header format
+    var log_header_fmt = "Generated on: %s\n\nLog Data for %s\n" +
+      "-------------------------\n\n"
 
     // Parse the flags, if any.
     flag.Parse()
@@ -208,18 +200,12 @@ func main() {
             os.Exit(1)
         }
 
-        // since this runs on an infinite loop, clear the contents of
-        // the previous generic log header
-        generic_log_header = ""
-
         // assemble the generic log header used by all of the logs
-        generic_log_header += "Generated on: " + datetime + "\n"
-        generic_log_header += "\n"
-        generic_log_header += "Log Data for " + latest_date_in_log + "\n"
-        generic_log_header += "-------------------------\n\n"
+        generic_log_header := fmt.Sprintf(log_header_fmt, datetime,
+          latest_date_in_log)
 
-        // append the title and header to the redirect_log_contents
-        redirect_log_contents += "Redirection Entry Data\n\n"
+        // set the title and append the header to the redirect_log_contents
+        redirect_log_contents := "Redirection Entry Data\n\n"
         redirect_log_contents += generic_log_header
 
         // compile a regex to search for 302 found-redirections
@@ -230,6 +216,7 @@ func main() {
         re := regexp.MustCompile(latest_date_in_log)
 
         // for every line...
+        lines_added_to_redirect := 0
         for _, line := range lines {
 
             // verify that a match could be found
@@ -349,8 +336,8 @@ func main() {
             os.Exit(1)
         }
 
-        // append the title to the whois_log_contents
-        whois_log_contents += "Whois Entry Data\n\n"
+        // set the title of the whois_log_contents
+        whois_log_contents := "Whois Entry Data\n\n"
 
         // append the date to the whois_log_contents on the next line
         whois_log_contents += generic_log_header
@@ -395,8 +382,8 @@ func main() {
             os.Exit(1)
         }
 
-        // append the title to the ip_log_contents
-        ip_log_contents += "IP Address Counts Data\n\n"
+        // set the title to the ip_log_contents
+        ip_log_contents := "IP Address Counts Data\n\n"
 
         // append the generic log header to the ip.log file
         ip_log_contents += generic_log_header
@@ -494,6 +481,7 @@ func main() {
 
         // if no entries were added to the blocked.log, then add a short
         // message noting that there were no addresses at this time
+        blocked_log_contents := ""
         if len(blocked_ip_addresses) < 1 {
             blocked_log_contents += "No IPs blocked at this time."
 
