@@ -2,9 +2,6 @@
 // File functions for ndefence
 //
 
-//
-// Package
-//
 package ndefenceIO
 
 //
@@ -17,7 +14,8 @@ import (
 	"strings"
 )
 
-//! Convert a file into a string array as per a given separator
+// TokenizeFile ... convert a file into a string array as per a given
+// separator
 /*
  * @param     string      /path/to/file
  * @param     string      tokenizer character sequence
@@ -33,7 +31,7 @@ func TokenizeFile(filepath string, separator string) ([]string,
 	}
 
 	// Check if access log file actually exists.
-	byte_contents, err := ioutil.ReadFile(filepath)
+	byteContents, err := ioutil.ReadFile(filepath)
 
 	// if an error occurs at this point, it is due to the program being
 	// unable to access a read the file, so pass back an error
@@ -43,28 +41,29 @@ func TokenizeFile(filepath string, separator string) ([]string,
 	}
 
 	// dump the contents of the file to a string
-	string_contents := string(byte_contents)
+	stringContents := string(byteContents)
 
 	// if the contents are less than 1 byte, mention that via error
-	if len(string_contents) < 1 {
+	if len(stringContents) < 1 {
 		return nil, fmt.Errorf("tokenizeFile() --> the following file "+
 			"was empty: ", filepath)
 	}
 
 	// attempt to break up the file into an array of strings
-	str_array := strings.Split(string_contents, separator)
+	strArray := strings.Split(stringContents, separator)
 
 	// terminate the program if the array has less than 1 element
-	if len(str_array) < 1 {
+	if len(strArray) < 1 {
 		return nil, fmt.Errorf("tokenizeFile() --> no string data was " +
 			"found")
 	}
 
 	// having obtained the lines of data, pass them back
-	return str_array, nil
+	return strArray, nil
 }
 
-//! Stat if a given file exists at specified path, else create it.
+// StatOrCreateFile ... stat if a given file exists at specified path,
+// else create it.
 /*
  * @param     string    /path/to/filename
  *
@@ -78,7 +77,7 @@ func StatOrCreateFile(path string) error {
 	}
 
 	// variable declaration
-	var fileNotFoundAndWasCreated bool = false
+	fileNotFoundAndWasCreated := false
 
 	// attempt to stat() if the whois.log file even exists
 	_, err := os.Stat(path)
@@ -87,11 +86,11 @@ func StatOrCreateFile(path string) error {
 	if os.IsNotExist(err) {
 
 		// if not, then create it
-		f, creation_err := os.Create(path)
+		f, creationErr := os.Create(path)
 
 		// if an error occurred during creation, terminate program
-		if creation_err != nil {
-			return creation_err
+		if creationErr != nil {
+			return creationErr
 		}
 
 		// then go ahead and close the file connection for the time being
@@ -112,25 +111,25 @@ func StatOrCreateFile(path string) error {
 	return nil
 }
 
-//! Determine the latest date present in the logs
+// ObtainLatestDate ... determine the latest date present in the logs
 /*
  * @param     string    line data
  *
  * @return    string    latest time-date, in the form of DD/MMM/YYYY
  *            error     error message, if any
  */
-func ObtainLatestDate(line_data string) (string, error) {
+func ObtainLatestDate(line string) (string, error) {
 
 	// input validation
-	if len(line_data) < 1 {
+	if len(line) < 1 {
 		return "", fmt.Errorf("obtainLatestDate() --> invalid input")
 	}
 
 	// variable declaration
-	var result string = ""
+	result := ""
 
 	// attempt to split that line via spaces
-	elements := strings.Split(line_data, " ")
+	elements := strings.Split(line, " ")
 
 	// safety check, ensure there are at least 4 elements
 	if len(elements) < 4 {
@@ -152,16 +151,16 @@ func ObtainLatestDate(line_data string) (string, error) {
 	}
 
 	// split the string via the ':' characters
-	time_pieces := strings.SplitAfter(datetime, ":")
+	timePieces := strings.SplitAfter(datetime, ":")
 
 	// ensure there is at least one element
-	if len(time_pieces) < 1 || len(time_pieces[0]) < 1 {
+	if len(timePieces) < 1 || len(timePieces[0]) < 1 {
 		return "", fmt.Errorf("obtainLatestDate() --> unable to use _:_ " +
 			"chars to separate time into pieces")
 	}
 
 	// trim away the remaining : chars
-	result = strings.Trim(time_pieces[0], ":")
+	result = strings.Trim(timePieces[0], ":")
 
 	// final safety check, ensure that the result has a len > 0
 	if len(result) < 1 {
