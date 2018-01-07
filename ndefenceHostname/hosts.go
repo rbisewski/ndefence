@@ -17,7 +17,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../ndefence_utils"
+	"../ndefenceUtils"
 )
 
 // ConvertIPAddressMapToString ... convert the global IP address map to an
@@ -105,7 +105,7 @@ func ConvertIPAddressMapToString(ipMap map[string]int,
 
 		// since the \t character tends to get mangled easily, add a buffer
 		// of single-space characters instead to the IPv4 addresses
-		spaceFormattedIPAddress, err := ndefence_utils.SpaceFormatIPv4(ip)
+		spaceFormattedIPAddress, err := ndefenceUtils.SpaceFormatIPv4(ip)
 
 		// if an error occurs, skip to the next element
 		if err != nil {

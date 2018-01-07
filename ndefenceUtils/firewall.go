@@ -5,7 +5,7 @@
 //
 // Package
 //
-package ndefence_utils
+package ndefenceUtils
 
 //
 // Imports

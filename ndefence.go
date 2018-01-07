@@ -25,7 +25,7 @@ import (
 
 	"./ndefenceHostname"
 	"./ndefenceIO"
-	"./ndefence_utils"
+	"./ndefenceUtils"
 )
 
 //
@@ -240,7 +240,7 @@ func main() {
 			ip := elements[0]
 
 			// determine if this is a valid IPv4 address
-			if !ndefence_utils.IsValidIPv4Address(ip) {
+			if !ndefenceUtils.IsValidIPv4Address(ip) {
 				continue
 			}
 
@@ -302,7 +302,7 @@ func main() {
 			// buffer of single-space characters instead to the IPv4
 			// addresses
 			spaceFormattedIPAddress, err :=
-				ndefence_utils.SpaceFormatIPv4(ip)
+				ndefenceUtils.SpaceFormatIPv4(ip)
 
 			// if an error occurs, skip to the next element
 			if err != nil {
@@ -318,7 +318,7 @@ func main() {
 
 			// finally, add the ip address to the list of IPv4 addresses to
 			// consider blocking eventually
-			if !ndefence_utils.IsStringInArray(ip, blockedIPAddresses) {
+			if !ndefenceUtils.IsStringInArray(ip, blockedIPAddresses) {
 				blockedIPAddresses = append(blockedIPAddresses, ip)
 			}
 
@@ -509,7 +509,7 @@ func main() {
 		//
 		// If a config is specified, attempt to generate a new one
 		//
-		err = ndefence_utils.Generate_config(defaultSiteConfigPath,
+		err = ndefenceUtils.Generate_config(defaultSiteConfigPath,
 			serverType, blockedIPAddresses, datetime)
 
 		// if an error occurs, terminate from the program
