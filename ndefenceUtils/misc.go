@@ -2,9 +2,6 @@
 // Misc utility functions for ndefence
 //
 
-//
-// Package
-//
 package ndefenceUtils
 
 //
@@ -18,7 +15,7 @@ import (
 	"strings"
 )
 
-//! Validate an IPv6 address
+// IsValidIPv6Address ... validate an IPv6 address
 /*
  * @param     string    /path/to/file
  *
@@ -34,18 +31,18 @@ func IsValidIPv6Address(ip string) bool {
 	}
 
 	// variable declaration
-	var wasEveryPieceBlank bool = true
+	wasEveryPieceBlank := true
 
 	// attempt to split the string into pieces via the ':' char
-	ip_pieces := strings.Split(ip, ":")
+	ipPieces := strings.Split(ip, ":")
 
 	// safety check, ensure there is at least one piece
-	if len(ip_pieces) < 1 {
+	if len(ipPieces) < 1 {
 		return false
 	}
 
 	// for every hexadecimal piece of the IPv6 address...
-	for _, hexa := range ip_pieces {
+	for _, hexa := range ipPieces {
 
 		// if the hexadecimal was blank, go ahead and switch over to
 		// the next element, since the IPv6 spec does allow for some
@@ -59,7 +56,7 @@ func IsValidIPv6Address(ip string) bool {
 		}
 
 		// convert the ip_piece string to an integer
-		hexa_as_uint, err := strconv.ParseUint(hexa, 16, 64)
+		hexaAsUint, err := strconv.ParseUint(hexa, 16, 64)
 
 		// if an error occurs, go ahead and return false
 		if err != nil {
@@ -67,7 +64,7 @@ func IsValidIPv6Address(ip string) bool {
 		}
 
 		// if greater than 0xFFFF pass back a false
-		if hexa_as_uint > 65535 {
+		if hexaAsUint > 65535 {
 			return false
 		}
 
@@ -86,7 +83,7 @@ func IsValidIPv6Address(ip string) bool {
 	return true
 }
 
-//! Validate an IPv4 address
+// IsValidIPv4Address ... validate an IPv4 address
 /*
  * @param     string    /path/to/file
  *
@@ -110,15 +107,15 @@ func IsValidIPv4Address(ip string) bool {
 	}
 
 	// attempt to split the string into pieces via the '.' char
-	ip_pieces := strings.Split(ip, ".")
+	ipPieces := strings.Split(ip, ".")
 
 	// ensure that there are at least 4 pieces
-	if len(ip_pieces) != 4 {
+	if len(ipPieces) != 4 {
 		return false
 	}
 
 	// for every oct piece of the IPv4 address...
-	for _, oct := range ip_pieces {
+	for _, oct := range ipPieces {
 
 		// ensure it has a length of at least 1
 		if len(oct) < 1 {
@@ -126,7 +123,7 @@ func IsValidIPv4Address(ip string) bool {
 		}
 
 		// convert the ip_piece string to an integer
-		oct_as_uint, err := strconv.ParseUint(oct, 0, 10)
+		octAsUint, err := strconv.ParseUint(oct, 0, 10)
 
 		// if an error occurred, throw back a false
 		if err != nil {
@@ -135,7 +132,7 @@ func IsValidIPv4Address(ip string) bool {
 
 		// ensure that the integer is between 0 and 255; actually it is a
 		// unsigned int at this point, so only need check if > 255
-		if oct_as_uint > 255 {
+		if octAsUint > 255 {
 			return false
 		}
 	}
@@ -144,8 +141,8 @@ func IsValidIPv4Address(ip string) bool {
 	return true
 }
 
-//! Take a given IP address and space buffer it so that it is always 15
-//! characters long.
+// SpaceFormatIPv4 ... take a given IP address and space buffer it so that
+// it is always 15 characters long.
 /*
  * @param    string    IPv4 address
  *
@@ -156,7 +153,7 @@ func SpaceFormatIPv4(ip string) (string, error) {
 
 	// input validation
 	if len(ip) < 1 || len(ip) > 15 {
-		return "", fmt.Errorf("spaceFormatIPv4() --> invalid input\n")
+		return "", fmt.Errorf("spaceFormatIPv4() --> invalid input")
 	}
 
 	// ensure this is actually a IPv4 address
@@ -166,16 +163,17 @@ func SpaceFormatIPv4(ip string) (string, error) {
 	}
 
 	// attempt to format the IPv4 address
-	space_formatted_ip_address := ip
-	for len(space_formatted_ip_address) < 16 {
-		space_formatted_ip_address += " "
+	spaceFormattedIPAddress := ip
+	for len(spaceFormattedIPAddress) < 16 {
+		spaceFormattedIPAddress += " "
 	}
 
 	// return the formatted IPv4 string
-	return space_formatted_ip_address, nil
+	return spaceFormattedIPAddress, nil
 }
 
-//! Convert a given IPv4 address to a x.x.x.0/24 CIDR notation
+// ObtainSlash24FromIpv4 ... convert a given IPv4 address to a x.x.x.0/24
+// CIDR notation
 /*
  * @param    string    an IPv4 address
  *
@@ -196,31 +194,32 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
 	}
 
 	// variable declaration
-	ipv4_slash24_cidr := ""
+	ipv4Slash24Cidr := ""
 
 	// separate the IPv4 address string into pieces
-	ip_pieces := strings.Split(ip, ".")
+	ipPieces := strings.Split(ip, ".")
 
 	// ensure that there are at least 4 pieces
-	if len(ip_pieces) != 4 {
+	if len(ipPieces) != 4 {
 		return "", fmt.Errorf("obtainSlash24FromIpv4() --> " +
 			"non-standard IPv4 address")
 	}
 
 	// reconstruct the IPv4 address string
-	ipv4_slash24_cidr += ip_pieces[0]
-	ipv4_slash24_cidr += "."
-	ipv4_slash24_cidr += ip_pieces[1]
-	ipv4_slash24_cidr += "."
-	ipv4_slash24_cidr += ip_pieces[2]
-	ipv4_slash24_cidr += "."
-	ipv4_slash24_cidr += "0/24"
+	ipv4Slash24Cidr += ipPieces[0]
+	ipv4Slash24Cidr += "."
+	ipv4Slash24Cidr += ipPieces[1]
+	ipv4Slash24Cidr += "."
+	ipv4Slash24Cidr += ipPieces[2]
+	ipv4Slash24Cidr += "."
+	ipv4Slash24Cidr += "0/24"
 
 	// having gone this far, return the adjusted result
-	return ipv4_slash24_cidr, nil
+	return ipv4Slash24Cidr, nil
 }
 
-//! Check if a given string value is present in a string array
+// IsStringInArray ... check if a given string value is present in a
+// string array
 /*
  *  @param    string      string value in question
  *  @param    []string    array of string values
@@ -245,7 +244,7 @@ func IsStringInArray(str string, stringArray []string) bool {
 	return false
 }
 
-//! Attempt to execute a given command.
+//RunNginxReloadCommand ... Attempt to execute a given command.
 /*
  *  @param    none
  *
@@ -274,7 +273,7 @@ func RunNginxReloadCommand() (bytes.Buffer, error) {
 	return output, nil
 }
 
-//! Attempt to execute a given command.
+// RunApacheReloadCommand ... attempt to execute a given command.
 /*
  *  @param    none
  *

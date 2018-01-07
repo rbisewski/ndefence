@@ -509,7 +509,7 @@ func main() {
 		//
 		// If a config is specified, attempt to generate a new one
 		//
-		err = ndefenceUtils.Generate_config(defaultSiteConfigPath,
+		err = ndefenceUtils.GenerateConfig(defaultSiteConfigPath,
 			serverType, blockedIPAddresses, datetime)
 
 		// if an error occurs, terminate from the program
