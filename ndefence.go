@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"./ndefenceHostname"
-	"./ndefence_io"
+	"./ndefenceIO"
 	"./ndefence_utils"
 )
 
@@ -157,7 +157,7 @@ func main() {
 
 		// Attempt to break up the file into an array of strings a demarked by
 		// the newline character.
-		lines, err := ndefence_io.TokenizeFile(accessLogLocation, "\n")
+		lines, err := ndefenceIO.TokenizeFile(accessLogLocation, "\n")
 
 		// if an error occurred, print it out and terminate the program
 		if err != nil {
@@ -178,7 +178,7 @@ func main() {
 
 		// extract the date of the last line, this is so that the program can
 		// gather data concerning only the latest entries
-		latestDateInLog, err := ndefence_io.ObtainLatestDate(lastLine)
+		latestDateInLog, err := ndefenceIO.ObtainLatestDate(lastLine)
 
 		// check if an error occurred
 		if err != nil {
@@ -347,7 +347,7 @@ func main() {
 
 		// attempt to stat() the whois.log file, else create it if it does
 		// not currently exist
-		err = ndefence_io.StatOrCreateFile(webLocation + whoisLog)
+		err = ndefenceIO.StatOrCreateFile(webLocation + whoisLog)
 
 		// if an error occurred during stat(), yet the program was unable
 		// to recover or recreate the file, then exit the program
@@ -373,7 +373,7 @@ func main() {
 
 		// attempt to stat() the ip.log file, else create it if it does
 		// not currently exist
-		err = ndefence_io.StatOrCreateFile(webLocation + ipLog)
+		err = ndefenceIO.StatOrCreateFile(webLocation + ipLog)
 
 		// if an error occurred during stat(), yet the program was unable
 		// to recover or recreate the file, then exit the program
@@ -412,7 +412,7 @@ func main() {
 
 		// attempt to stat() the ip.log file, else create it if it does
 		// not currently exist
-		err = ndefence_io.StatOrCreateFile(webLocation + redirectLog)
+		err = ndefenceIO.StatOrCreateFile(webLocation + redirectLog)
 
 		// if an error occurred during stat(), yet the program was unable
 		// to recover or recreate the file, then exit the program
@@ -470,7 +470,7 @@ func main() {
 
 		// attempt to stat() the blocked.log file, else create it if it does
 		// not currently exist
-		err = ndefence_io.StatOrCreateFile(webLocation + blockedLog)
+		err = ndefenceIO.StatOrCreateFile(webLocation + blockedLog)
 
 		// if an error occurred during stat(), yet the program was unable
 		// to recover or recreate the file, then exit the program
