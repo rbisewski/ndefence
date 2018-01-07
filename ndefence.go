@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"./ndefence_hostname"
+	"./ndefenceHostname"
 	"./ndefence_io"
 	"./ndefence_utils"
 )
@@ -328,7 +328,7 @@ func main() {
 
 		// attempt to obtain the whois entries, as a string
 		whoisStrings, whoisSummaryMap, err :=
-			ndefence_hostname.ObtainWhoisEntries(ipAddresses)
+			ndefenceHostname.ObtainWhoisEntries(ipAddresses)
 
 		// if an error occurred, terminate the program
 		if err != nil {
@@ -362,7 +362,7 @@ func main() {
 			0644)
 
 		// convert the ip addresses map into an array of strings
-		IPstrings, err := ndefence_hostname.ConvertIpAddressMapToString(
+		IPstrings, err := ndefenceHostname.ConvertIPAddressMapToString(
 			ipAddresses, whoisSummaryMap)
 
 		// if an error occurred, terminate from the program
