@@ -62,7 +62,8 @@ var (
 	validServerTypes = []string{"apache", "nginx"}
 
 	// Path to default site config
-	defaultSiteConfigPath = ""
+	defaultSiteConfigPath       = ""
+	defaultBlockedIPsConfigPath = ""
 
 	// Boolean to flag whether a given server is valid or not
 	serverIsValid = false
@@ -483,11 +484,9 @@ func main() {
 		// message noting that there were no addresses at this time
 		blockedLogContents := ""
 		if len(blockedIPAddresses) < 1 {
-			blockedLogContents += "No IPs blocked at this time."
-
-			// else print the IPs that would have been blocked
+			blockedLogContents = "# No IPs blocked at this time."
 		} else {
-
+			// else print the IPs that would have been blocked
 			// append all of the blocked IPs together, newline separated
 			for _, ip := range blockedIPAddresses {
 				blockedLogContents += ip + "\n"
@@ -509,8 +508,9 @@ func main() {
 		//
 		// If a config is specified, attempt to generate a new one
 		//
-		err = ndefenceUtils.GenerateConfig(defaultSiteConfigPath,
-			serverType, blockedIPAddresses, datetime)
+		err = ndefenceUtils.GenerateBlockedCfg(
+			defaultBlockedIPsConfigPath, serverType,
+			blockedIPAddresses, datetime)
 
 		// if an error occurs, terminate from the program
 		if err != nil {

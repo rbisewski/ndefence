@@ -16,6 +16,29 @@ import (
 	"../ndefenceServer"
 )
 
+// GenerateBlockedCfg ... updates the blocked IP address config file with
+//                        new entries, if any
+/*
+ * @param    string      /path/to/blockedips.cfg
+ * @param    string      server type (nginx, apache2, etc)
+ * @param    string[]    list of IPv4 addressess to consider blocking
+ * @param    string      Datetime, as a string
+ *
+ * @return   error       error message, if any
+ *
+ * TODO: implement function
+ */
+func GenerateBlockedCfg(path string, serverType string, ips []string,
+	datetime string) error {
+
+	// input validation
+	if path == "" || serverType == "" || len(ips) < 1 || datetime == "" {
+		return nil
+	}
+
+	return nil
+}
+
 // GenerateConfig ... spawns a configuration file based on the provided data
 /*
  * @param    string      /path/to/config
