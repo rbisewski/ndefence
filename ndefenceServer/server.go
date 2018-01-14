@@ -2,9 +2,6 @@
 // Server definition and related functions for ndefence
 //
 
-//
-// Package
-//
 package ndefenceServer
 
 //
@@ -19,18 +16,18 @@ import (
 // Server object definition
 //
 type Server struct {
-	Listen       []string
-	SSL          bool
-	SSL_cert     string
-	SSL_cert_key string
-	Server_name  string
-	Location     []string
-	Root         string
-	Index        string
-	Return       string
+	Listen     []string
+	SSL        bool
+	SSLCert    string
+	SSLCertKey string
+	ServerName string
+	Location   []string
+	Root       string
+	Index      string
+	Return     string
 }
 
-//! Parse a configuration file, and return a list of servers
+// ConvertStringsToServers ... parse config file, and return a list of servers
 /*
  * @param     string[]    array of lines
  *
@@ -39,78 +36,77 @@ type Server struct {
  *
  * TODO: test this carefully
  */
-func ConvertStringsToServers(string_data []string) ([]Server,
-	error) {
+func ConvertStringsToServers(data []string) ([]Server, error) {
 
 	// input validation
-	if len(string_data) < 1 {
+	if len(data) < 1 {
 		return nil, fmt.Errorf("convertStringsToServers() --> invalid input")
 	}
 
 	// variable declaration
-	var list_of_servers = make([]Server, 0)
-	var open_bracket_count uint = 0
-	var close_bracket_count uint = 0
-	var currently_parsing_a_server bool = false
-	var tmp_server_str []string = make([]string, 0)
+	listOfServers := make([]Server, 0)
+	openBracketCount := uint(0)
+	closeBracketCount := uint(0)
+	currentlyParsingServer := false
+	tmpServerStr := make([]string, 0)
 
 	// attempt to assemble a regex to handle
-	server_regex := regexp.MustCompile("^[\t\f\r ]{1,16}server[\t\f\r ]{1,6}[{][\t\f\r ]{1,30}\n$")
-	open_bracket_regex := regexp.MustCompile("[\t\f\r ]{1,16}[{][\t\f\r ]{1,16}")
-	close_bracket_regex := regexp.MustCompile("[\t\f\r ]{1,16}[}][\t\f\r ]{1,16}")
+	serverRegex := regexp.MustCompile("^[\t\f\r ]{1,16}server[\t\f\r ]{1,6}[{][\t\f\r ]{1,30}\n$")
+	openBracketRegex := regexp.MustCompile("[\t\f\r ]{1,16}[{][\t\f\r ]{1,16}")
+	closeBracketRegex := regexp.MustCompile("[\t\f\r ]{1,16}[}][\t\f\r ]{1,16}")
 
 	// for every line of string data...
-	for _, line := range string_data {
+	for _, line := range data {
 
 		//
 		// Currently parsing a Server entry
 		//
-		if currently_parsing_a_server {
+		if currentlyParsingServer {
 
 			// search for a line that contains `{`
-			was_an_open_bracket_found := open_bracket_regex.FindString(line)
+			wasAnOpenBracketFound := openBracketRegex.FindString(line)
 
 			// if an open bracket was found, go ahead and increment the
 			// counter
-			if len(was_an_open_bracket_found) > 0 {
-				open_bracket_count++
-				tmp_server_str = append(tmp_server_str, line)
+			if len(wasAnOpenBracketFound) > 0 {
+				openBracketCount++
+				tmpServerStr = append(tmpServerStr, line)
 				continue
 			}
 
 			// search for a line that contains `}`
-			was_a_close_bracket_found := close_bracket_regex.FindString(line)
+			wasCloseBracketFound := closeBracketRegex.FindString(line)
 
 			// if a close bracket was found...
-			if len(was_a_close_bracket_found) > 0 {
+			if len(wasCloseBracketFound) > 0 {
 
 				// go ahead and increment the counter
-				close_bracket_count++
+				closeBracketCount++
 
 				// append the line
-				tmp_server_str = append(tmp_server_str, line)
+				tmpServerStr = append(tmpServerStr, line)
 
 				// if the number of open & close brackets is greater than
 				// zero and equal to each other, the server has been completely
 				// parsed
-				if open_bracket_count == close_bracket_count &&
-					open_bracket_count > 0 && close_bracket_count > 0 {
+				if openBracketCount == closeBracketCount &&
+					openBracketCount > 0 && closeBracketCount > 0 {
 
 					// set the flag to false as this logic has since parsed
 					// the entire server
-					currently_parsing_a_server = false
+					currentlyParsingServer = false
 
 					// take the current string data and attempt to convert it
 					// to nginx server entry
-					new_server, err := convertToNginxServerEntry(tmp_server_str)
+					newServer, err := convertToNginxServerEntry(tmpServerStr)
 
 					// if no errors, append it to the list of servers
 					if err == nil {
-						list_of_servers = append(list_of_servers, new_server)
+						listOfServers = append(listOfServers, newServer)
 					}
 
 					// clear the current array of server strings
-					tmp_server_str = nil
+					tmpServerStr = nil
 				}
 
 				// move on to the next line
@@ -119,7 +115,7 @@ func ConvertStringsToServers(string_data []string) ([]Server,
 
 			// otherwise neither an open nor closed bracket was found, so
 			// just go ahead and append the line
-			tmp_server_str = append(tmp_server_str, line)
+			tmpServerStr = append(tmpServerStr, line)
 
 			//
 			// Not currently parsing a Server entry
@@ -127,21 +123,21 @@ func ConvertStringsToServers(string_data []string) ([]Server,
 		} else {
 
 			// search for a line that contains `server {`
-			was_a_server_entry_found := server_regex.FindString(line)
+			wasServerEntryFound := serverRegex.FindString(line)
 
 			// if a server entry starting point was not found, go ahead and
 			// skip to the next line
-			if len(was_a_server_entry_found) < 1 {
+			if len(wasServerEntryFound) < 1 {
 				continue
 			}
 
 			// otherwise a server was found, so set the flag
-			currently_parsing_a_server = true
+			currentlyParsingServer = true
 		}
 	}
 
 	// everything worked fine, so go ahead and return a list of servers
-	return list_of_servers, nil
+	return listOfServers, nil
 }
 
 //! Parse a configuration file, and return a list of servers
@@ -162,25 +158,25 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 	}
 
 	// define a blank and empty new server
-	var new_server Server = Server{make([]string, 0), false, "", "", "",
+	newServer := Server{make([]string, 0), false, "", "", "",
 		make([]string, 0), "", "", ""}
 
 	// define a variable to keep track of regex success hits, and a flag to
 	// let the parser know that that this is parsing `location {}`
-	var success string = ""
-	var isThisParsingLocation bool = false
+	success := ""
+	isThisParsingLocation := false
 
 	// assemble the needed regex
-	listen_regex := regexp.MustCompile("^[\t\f\r ]{1,16}listen[\t\f\r ]{1,16}(?.{2,16})[\t\f\r ]{1,16}")
-	server_name_regex := regexp.MustCompile("^[\t\f\r ]{1,16}server_name[\t\f\r ]{1,16}(?.{2,16});")
-	root_regex := regexp.MustCompile("^[\t\f\r ]{1,16}server_name[\t\f\r ]{1,16}(?.{2,32});")
-	index_regex := regexp.MustCompile("^[\t\f\r ]{1,16}index[\t\f\r ]{1,16}(?.{2,32})")
-	return_regex := regexp.MustCompile("^[\t\f\r ]{1,16}return[\t\f\r ]{1,16}(?.{2,32});")
-	ssl_regex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl[\t\f\r ]{1,16}(?.{1,8});")
-	ssl_certificate_regex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl_certificate[\t\f\r ]{1,16}(?.{1,8});")
-	ssl_certificate_key_regex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl_certificate_key[\t\f\r ]{1,16}(?.{1,8});")
-	location_regex := regexp.MustCompile("^[\t\f\r ]{1,16}location[\t\f\r ]{1,16}(?.{2,16})[\t\f\r ]{1,16}[{]")
-	close_bracket_regex := regexp.MustCompile("[\t\f\r ]{1,16}[}][\t\f\r ]{1,16}")
+	listenRegex := regexp.MustCompile("^[\t\f\r ]{1,16}listen[\t\f\r ]{1,16}(?.{2,16})[\t\f\r ]{1,16}")
+	serverNameRegex := regexp.MustCompile("^[\t\f\r ]{1,16}server_name[\t\f\r ]{1,16}(?.{2,16});")
+	rootRegex := regexp.MustCompile("^[\t\f\r ]{1,16}server_name[\t\f\r ]{1,16}(?.{2,32});")
+	indexRegex := regexp.MustCompile("^[\t\f\r ]{1,16}index[\t\f\r ]{1,16}(?.{2,32})")
+	returnRegex := regexp.MustCompile("^[\t\f\r ]{1,16}return[\t\f\r ]{1,16}(?.{2,32});")
+	sslRegex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl[\t\f\r ]{1,16}(?.{1,8});")
+	sslCertificateRegex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl_certificate[\t\f\r ]{1,16}(?.{1,8});")
+	sslCertificateKeyRegex := regexp.MustCompile("^[\t\f\r ]{1,16}ssl_certificate_key[\t\f\r ]{1,16}(?.{1,8});")
+	locationRegex := regexp.MustCompile("^[\t\f\r ]{1,16}location[\t\f\r ]{1,16}(?.{2,16})[\t\f\r ]{1,16}[{]")
+	closeBracketRegex := regexp.MustCompile("[\t\f\r ]{1,16}[}][\t\f\r ]{1,16}")
 
 	// cycle thru the list of the data string
 	for _, line := range data {
@@ -191,96 +187,96 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 		}
 
 		// check for "listen xx;"
-		success = listen_regex.FindString(line)
+		success = listenRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.Listen = append(new_server.Listen, success)
+			newServer.Listen = append(newServer.Listen, success)
 			continue
 		}
 
 		// check for "server_name www.example.org;"
-		success = server_name_regex.FindString(line)
+		success = serverNameRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.Server_name = success
+			newServer.ServerName = success
 			continue
 		}
 
 		// check for "root /var/www/html;"
-		success = root_regex.FindString(line)
+		success = rootRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.Root = success
+			newServer.Root = success
 			continue
 		}
 
 		// check for "index page.html;"
-		success = index_regex.FindString(line)
+		success = indexRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.Index = success
+			newServer.Index = success
 			continue
 		}
 
 		// check for "return www.example.org/new/page.html;"
-		success = return_regex.FindString(line)
+		success = returnRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.Return = success
+			newServer.Return = success
 			continue
 		}
 
 		// check for "ssl on;"
-		success = ssl_regex.FindString(line)
+		success = sslRegex.FindString(line)
 
 		// move on to the next line if the regex successfully determined
 		// that SSL is set to on...
 		if len(success) > 0 && success == "on" {
-			new_server.SSL = true
+			newServer.SSL = true
 			continue
 
 			// move on to the next line if the regex successfully determined
 			// that SSL is set to off...
 		} else if len(success) > 0 && success != "on" {
-			new_server.SSL = false
+			newServer.SSL = false
 			continue
 		}
 
 		// check for "ssl_certificate xxx;"
-		success = ssl_certificate_regex.FindString(line)
+		success = sslCertificateRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.SSL_cert = success
+			newServer.SSLCert = success
 			continue
 		}
 
 		// check for "ssl_certificate_key xxx;"
-		success = ssl_certificate_key_regex.FindString(line)
+		success = sslCertificateKeyRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
-			new_server.SSL_cert_key = success
+			newServer.SSLCertKey = success
 			continue
 		}
 
 		// check for "location /path/to/site {"
-		success = location_regex.FindString(line)
+		success = locationRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
 			isThisParsingLocation = true
-			new_server.Location = append(new_server.Location, line)
+			newServer.Location = append(newServer.Location, line)
 			continue
 		}
 
 		// check for "}"
-		success = close_bracket_regex.FindString(line)
+		success = closeBracketRegex.FindString(line)
 
 		// move on to the next line if regex successful
 		if len(success) > 0 {
@@ -288,7 +284,7 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 			// hence parsing location is done
 			if isThisParsingLocation {
 				isThisParsingLocation = false
-				new_server.Location = append(new_server.Location, line)
+				newServer.Location = append(newServer.Location, line)
 			}
 
 			// move on to the next entry
@@ -299,16 +295,16 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 		if isThisParsingLocation {
 
 			// then go ahead and append the line
-			new_server.Location = append(new_server.Location, line)
+			newServer.Location = append(newServer.Location, line)
 			continue
 		}
 	}
 
 	// since this generated a new server object, pass it back
-	return new_server, nil
+	return newServer, nil
 }
 
-//! Convert a given Server object into a set of strings
+// ConvertServerToString ... convert given Server object into a set of strings
 /*
  * @param     Server      given Server object
  *
@@ -318,15 +314,11 @@ func convertToNginxServerEntry(data []string) (Server, error) {
 func ConvertServerToString(server Server) (string, error) {
 
 	// input validation
-	if len(server.Server_name) < 1 || len(server.Listen) < 1 {
+	if len(server.ServerName) < 1 || len(server.Listen) < 1 {
 		return "", fmt.Errorf("convertServerToString() --> invalid input")
 	}
 
-	// variable declaration
-	var output string = ""
-
-	// append the server start
-	output += "server {\n"
+	output := "server {\n"
 
 	// print out every listen
 	for _, l := range server.Listen {
@@ -348,13 +340,13 @@ func ConvertServerToString(server Server) (string, error) {
 	// if an SSL cert was defined, and SSL is enabled, go ahead and append
 	// it to the output
 	if server.SSL == true {
-		output += "ssl_certificate " + server.SSL_cert + ";\n"
+		output += "ssl_certificate " + server.SSLCert + ";\n"
 	}
 
 	// if an SSL cert key was defined, and SSL is enabled, go ahead and
 	// append it to the output
 	if server.SSL == true {
-		output += "ssl_certificate_key " + server.SSL_cert_key + ";\n"
+		output += "ssl_certificate_key " + server.SSLCertKey + ";\n"
 	}
 
 	// append the document root
@@ -364,8 +356,8 @@ func ConvertServerToString(server Server) (string, error) {
 	output += "index " + server.Index + ";\n"
 
 	// attach the server name, if there is one
-	if len(server.Server_name) > 0 {
-		output += "server_name " + server.Server_name + ";\n"
+	if len(server.ServerName) > 0 {
+		output += "server_name " + server.ServerName + ";\n"
 
 		// otherwise default to just the current website location
 	} else {

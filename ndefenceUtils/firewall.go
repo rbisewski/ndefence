@@ -69,7 +69,7 @@ func GenerateConfig(defaultSiteConfigPath string,
 		for _, server := range listOfServers {
 
 			// verify that the server block was read properly
-			if len(server.Server_name) < 1 || len(server.Listen) < 1 {
+			if len(server.ServerName) < 1 || len(server.Listen) < 1 {
 
 				// else skip to the next element
 				continue
