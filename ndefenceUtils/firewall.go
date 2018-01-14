@@ -13,7 +13,7 @@ import (
 	"os"
 
 	"../ndefenceIO"
-	"../ndefence_server"
+	"../ndefenceServer"
 )
 
 // GenerateConfig ... spawns a configuration file based on the provided data
@@ -57,7 +57,7 @@ func GenerateConfig(defaultSiteConfigPath string,
 		// reading from the above config string data, attempt to convert
 		// the string data to a list of servers
 		listOfServers, err :=
-			ndefence_server.ConvertStringsToServers(siteConfigData)
+			ndefenceServer.ConvertStringsToServers(siteConfigData)
 
 		// if an error occurs, terminate from the program
 		if err != nil {
@@ -77,7 +77,7 @@ func GenerateConfig(defaultSiteConfigPath string,
 
 			// if the server block looks good, go ahead and append it
 			// to a string
-			output, err := ndefence_server.ConvertServerToString(server)
+			output, err := ndefenceServer.ConvertServerToString(server)
 
 			// if an error occurred, skip to the next element
 			if err != nil {
