@@ -505,12 +505,27 @@ func main() {
 			os.Exit(1)
 		}
 
+		// read the current list of blocked IP addresses
+		err, currentlyBlockedIPs :=
+			ndefenceUtils.ReadBlockedIPConfig(
+				defaultBlockedIPsConfigPath, serverType,
+				datetime)
+
+		// if an error occurs, terminate from the program
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// merge both sets of blocked IP addresses
+		bips := append(currentlyBlockedIPs, blockedIPAddresses...)
+
 		//
 		// If a config is specified, attempt to generate a new one
 		//
 		err = ndefenceUtils.GenerateBlockedCfg(
-			defaultBlockedIPsConfigPath, serverType,
-			blockedIPAddresses, datetime)
+			defaultBlockedIPsConfigPath, serverType, bips,
+			datetime)
 
 		// if an error occurs, terminate from the program
 		if err != nil {
