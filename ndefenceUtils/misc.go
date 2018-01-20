@@ -218,6 +218,32 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
 	return ipv4Slash24Cidr, nil
 }
 
+// ReadBlockedIPConfig ... read blocked ip values and return as an array
+/*
+ * @param    string      /path/to/blockedips.cfg
+ * @param    string      server type (nginx, apache2, etc)
+ * @param    string      Datetime, as a string
+ *
+ * @return   error       error message, if any
+ *
+ * TODO: implement function
+ */
+func ReadBlockedIPConfig(path string, stype string,
+	datetime string) (error, []string) {
+
+	// input validation
+	if path == "" || stype == "" || datetime == "" {
+		return fmt.Errorf("ReadBlockedIPConfig() --> invalid " +
+			"input"), nil
+	}
+
+	listOfBlockedIPs := make([]string, 0)
+
+	// TODO: add code to read the contents of this file
+
+	return nil, listOfBlockedIPs
+}
+
 // IsStringInArray ... check if a given string value is present in a
 // string array
 /*

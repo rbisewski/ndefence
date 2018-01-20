@@ -36,6 +36,8 @@ func GenerateBlockedCfg(path string, serverType string, ips []string,
 		return nil
 	}
 
+	// TODO: implement logic to write this file
+
 	return nil
 }
 
