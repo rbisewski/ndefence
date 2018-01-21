@@ -13,6 +13,8 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"../ndefenceIO"
 )
 
 // IsValidIPv6Address ... validate an IPv6 address
@@ -226,7 +228,7 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
  *
  * @return   error       error message, if any
  *
- * TODO: implement function
+ * TODO: implement functionality to handle IP add / removal
  */
 func ReadBlockedIPConfig(path string, stype string,
 	datetime string) (error, []string) {
@@ -239,7 +241,50 @@ func ReadBlockedIPConfig(path string, stype string,
 
 	listOfBlockedIPs := make([]string, 0)
 
-	// TODO: add code to read the contents of this file
+	lines, err := ndefenceIO.TokenizeFile(path, "\n")
+	if err != nil {
+		return err, nil
+	}
+
+	for _, line := range lines {
+
+		//
+		// IP addresses in the blocked IPs file should be in the
+		// form of "address # timestamp" or "address # perma" like
+		// the example below:
+		//
+		// 127.0.0.1 # perma
+		// 10.0.0.2 # 1516569627
+		//
+		pieces := strings.Split(line, "#")
+
+		if len(pieces) != 2 {
+			continue
+		}
+
+		if pieces[0] == "" || pieces[1] == "" {
+			continue
+		}
+
+		// remove the "deny " at the start of the entry
+		possibleIP := strings.TrimSpace(pieces[0])
+		possibleIP = strings.Trim(possibleIP, "deny")
+
+		// TODO: add logic to interpret the timestamp and decide
+		//       whether to retain the current IP extracted
+		//
+		//       For now simply trim away whitespace and validate
+		//       the IP address; if it passes, append it to the
+		//       list of IPs to re-add to the file
+		//
+		ip := strings.TrimSpace(possibleIP)
+
+		if !IsValidIPv4Address(ip) {
+			continue
+		}
+
+		listOfBlockedIPs = append(listOfBlockedIPs, ip)
+	}
 
 	return nil, listOfBlockedIPs
 }
