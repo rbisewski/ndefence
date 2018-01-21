@@ -25,8 +25,6 @@ import (
  * @param    string      Datetime, as a string
  *
  * @return   error       error message, if any
- *
- * TODO: implement function
  */
 func GenerateBlockedCfg(path string, serverType string, ips []string,
 	datetime string) error {
@@ -36,9 +34,22 @@ func GenerateBlockedCfg(path string, serverType string, ips []string,
 		return nil
 	}
 
-	// TODO: implement logic to write this file
+	// TODO: implement functionality to handle Apache servers
+	if serverType == "apache" {
+		return nil
+	}
 
-	return nil
+	lines := ""
+	for _, ip := range ips {
+
+		lines += "deny " + ip + " # " + datetime + "\n"
+	}
+
+	err := ioutil.WriteFile(path, []byte(lines), 0644)
+
+	// if the file wrote correctly, this will return nil, else this
+	// function will return the error message
+	return err
 }
 
 // GenerateConfig ... spawns a configuration file based on the provided data
