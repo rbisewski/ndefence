@@ -226,24 +226,23 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
  * @param    string      server type (nginx, apache2, etc)
  * @param    string      Datetime, as a string
  *
+ * @return   map         map[IPv4 Address] = timestamp, in seconds
  * @return   error       error message, if any
- *
- * TODO: implement functionality to handle IP add / removal
  */
 func ReadBlockedIPConfig(path string, stype string,
-	datetime string) (error, []string) {
+	datetime string) (map[string]int, error) {
 
 	// input validation
 	if path == "" || stype == "" || datetime == "" {
-		return fmt.Errorf("ReadBlockedIPConfig() --> invalid " +
-			"input"), nil
+		return nil, fmt.Errorf("ReadBlockedIPConfig() --> invalid " +
+			"input")
 	}
 
-	listOfBlockedIPs := make([]string, 0)
+	listOfBlockedIPs := make(map[string]int, 0)
 
 	lines, err := ndefenceIO.TokenizeFile(path, "\n")
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	for _, line := range lines {
@@ -270,23 +269,44 @@ func ReadBlockedIPConfig(path string, stype string,
 		possibleIP := strings.TrimSpace(pieces[0])
 		possibleIP = strings.Trim(possibleIP, "deny")
 
-		// TODO: add logic to interpret the timestamp and decide
-		//       whether to retain the current IP extracted
-		//
-		//       For now simply trim away whitespace and validate
-		//       the IP address; if it passes, append it to the
-		//       list of IPs to re-add to the file
-		//
+		// trim and validate the IP
 		ip := strings.TrimSpace(possibleIP)
-
 		if !IsValidIPv4Address(ip) {
 			continue
 		}
 
-		listOfBlockedIPs = append(listOfBlockedIPs, ip)
+		// trim the timestamp string
+		timestampStr := strings.TrimSpace(pieces[1])
+		if timestampStr == "" {
+			continue
+		}
+
+		// perma entries will stay blocked forever
+		if timestampStr == "perma" {
+			listOfBlockedIPs[ip] = -1
+			continue
+		}
+
+		timestamp, err := strconv.ParseInt(timestampStr, 10, 64)
+		if err != nil {
+			continue
+		}
+
+		currentTime, err := strconv.ParseInt(datetime, 10, 64)
+		if err != nil {
+			continue
+		}
+
+		// if the IP has been blocked for 48 hours in seconds, skip
+		// it since it has been blocked long enough
+		if currentTime-timestamp > 172800 {
+			continue
+		}
+
+		listOfBlockedIPs[ip] = int(timestamp)
 	}
 
-	return nil, listOfBlockedIPs
+	return listOfBlockedIPs, nil
 }
 
 // IsStringInArray ... check if a given string value is present in a
