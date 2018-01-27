@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"../ndefenceIO"
 	"../ndefenceServer"
@@ -26,7 +27,7 @@ import (
  *
  * @return   error       error message, if any
  */
-func GenerateBlockedCfg(path string, serverType string, ips []string,
+func GenerateBlockedCfg(path string, serverType string, ips map[string]int,
 	datetime string) error {
 
 	// input validation
@@ -40,9 +41,18 @@ func GenerateBlockedCfg(path string, serverType string, ips []string,
 	}
 
 	lines := ""
-	for _, ip := range ips {
+	for ip, time := range ips {
 
-		lines += "deny " + ip + " # " + datetime + "\n"
+		timeStr := strconv.Itoa(time)
+
+		if time == -1 {
+			timeStr = "perma"
+
+		} else if time == 0 {
+			timeStr = datetime
+		}
+
+		lines += "deny " + ip + " # " + timeStr + "\n"
 	}
 
 	err := ioutil.WriteFile(path, []byte(lines), 0644)
