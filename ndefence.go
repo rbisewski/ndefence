@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -506,7 +507,7 @@ func main() {
 		}
 
 		// read the current list of blocked IP addresses
-		err, currentlyBlockedIPs :=
+		currentlyBlockedIPs, err :=
 			ndefenceUtils.ReadBlockedIPConfig(
 				defaultBlockedIPsConfigPath, serverType,
 				datetime)
@@ -518,13 +519,21 @@ func main() {
 		}
 
 		// merge both sets of blocked IP addresses
-		bips := append(currentlyBlockedIPs, blockedIPAddresses...)
+		for _, ip := range blockedIPAddresses {
+			timestamp, err := strconv.ParseInt(datetime, 10, 64)
+			if err != nil {
+				timestamp = 0
+			}
+			currentlyBlockedIPs[ip] = int(timestamp)
+		}
 
 		//
 		// If a config is specified, attempt to generate a new one
 		//
 		err = ndefenceUtils.GenerateBlockedCfg(
-			defaultBlockedIPsConfigPath, serverType, bips,
+			defaultBlockedIPsConfigPath,
+			serverType,
+			currentlyBlockedIPs,
 			datetime)
 
 		// if an error occurs, terminate from the program
