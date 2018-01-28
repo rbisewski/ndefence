@@ -26,6 +26,8 @@ import (
  * @param    string      Datetime, as a string
  *
  * @return   error       error message, if any
+ *
+ * TODO: test this to ensure it works
  */
 func GenerateBlockedCfg(path string, serverType string, ips map[string]int,
 	datetime string) error {

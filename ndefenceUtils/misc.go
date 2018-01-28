@@ -228,6 +228,8 @@ func ObtainSlash24FromIpv4(ip string) (string, error) {
  *
  * @return   map         map[IPv4 Address] = timestamp, in seconds
  * @return   error       error message, if any
+ *
+ * TODO: test this to ensure it works
  */
 func ReadBlockedIPConfig(path string, stype string,
 	datetime string) (map[string]int, error) {
