@@ -17,7 +17,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../ndefenceUtils"
+	"github.com/rbisewski/ndefence/ndefenceUtils"
 )
 
 // ConvertIPAddressMapToString ... convert the global IP address map to an

@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../ndefenceIO"
+	"github.com/rbisewski/ndefence/ndefenceIO"
 )
 
 // IsValidIPv6Address ... validate an IPv6 address

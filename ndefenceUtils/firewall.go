@@ -13,8 +13,8 @@ import (
 	"os"
 	"strconv"
 
-	"../ndefenceIO"
-	"../ndefenceServer"
+	"github.com/rbisewski/ndefence/ndefenceIO"
+	"github.com/rbisewski/ndefence/ndefenceServer"
 )
 
 // GenerateBlockedCfg ... updates the blocked IP address config file with

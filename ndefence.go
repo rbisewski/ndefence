@@ -24,9 +24,9 @@ import (
 	"strings"
 	"time"
 
-	"./ndefenceHostname"
-	"./ndefenceIO"
-	"./ndefenceUtils"
+	"github.com/rbisewski/ndefence/ndefenceHostname"
+	"github.com/rbisewski/ndefence/ndefenceIO"
+	"github.com/rbisewski/ndefence/ndefenceUtils"
 )
 
 //
